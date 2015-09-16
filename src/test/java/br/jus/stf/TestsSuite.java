@@ -4,6 +4,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import br.jus.stf.autuacao.application.PeticaoApplicationEventIntegrationTests;
 import br.jus.stf.autuacao.application.PeticaoApplicationServiceUnitTests;
 import br.jus.stf.autuacao.application.PeticaoIntegrationTests;
 import br.jus.stf.autuacao.domain.ClasseProcessualServiceUnitTests;
@@ -16,7 +17,7 @@ import br.jus.stf.shared.infra.action.AcoesIntegrationTests;
 @SuiteClasses({ AutuacaoOriginariosIntegrationTests.class, AcoesIntegrationTests.class,
 	DocumentoIntegrationTests.class, PeticaoApplicationServiceUnitTests.class,
 	PeticaoIntegrationTests.class, ClasseProcessualServiceUnitTests.class,
-	MinistroServiceUnitTests.class})
+	MinistroServiceUnitTests.class, PeticaoApplicationEventIntegrationTests.class})
 public class TestsSuite {
 
 }

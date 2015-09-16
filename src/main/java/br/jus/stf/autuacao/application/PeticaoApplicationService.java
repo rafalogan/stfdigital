@@ -45,6 +45,9 @@ public class PeticaoApplicationService {
 	
 	@Autowired
 	private PeticaoFactory peticaoFactory;
+	
+	@Autowired
+	private PeticaoApplicationEvent peticaoApplicationEvent;
 
 	/**
 	 * Registra uma nova petilçao.
@@ -62,7 +65,9 @@ public class PeticaoApplicationService {
 		idProcesso = processoAdapter.iniciar(tipoRecebimento);
 		peticao.associarProcessoWorkflow(new ProcessoWorkflowId(idProcesso));
 		
-		return peticaoRepository.save(peticao);
+		peticaoRepository.save(peticao);
+		peticaoApplicationEvent.peticaoRecebida(peticao);
+		return peticao;
 	}
 	
 	/**
@@ -81,7 +86,9 @@ public class PeticaoApplicationService {
 		idProcesso = processoAdapter.iniciar(tipoRecebimento);
 		peticao.associarProcessoWorkflow(new ProcessoWorkflowId(idProcesso));
 		
-		return peticaoRepository.save(peticao);
+		peticaoRepository.save(peticao);
+		peticaoApplicationEvent.peticaoRecebida(peticao);
+		return peticao;
 	}
 
 	/**

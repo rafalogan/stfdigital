@@ -56,32 +56,32 @@ public abstract class Peticao implements Entity<Peticao> {
 	private Integer ano;
 	
 	@Embedded
+	@AttributeOverride(name = "sigla",
+		column = @Column(name = "SIG_CLASSE_SUGERIDA"))
+	private ClasseId classeSugerida;
+	
+	@Embedded
 	private ClasseId classeProcessual;
 	
 	@Column(name = "DSC_MOTIVO_REJEICAO")
 	private String motivoRejeicao;
+	
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,
+			targetEntity = PartePeticao.class)
+	@JoinColumn(name = "SEQ_PETICAO")
+	private Set<Parte> partes = new HashSet<Parte>(0);
+		
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "PETICAO_DOCUMENTO", schema = "AUTUACAO",
+		joinColumns = @JoinColumn(name = "SEQ_PETICAO"))
+	private Set<DocumentoId> documentos = new TreeSet<DocumentoId>(
+			(d1, d2) -> d1.toLong().compareTo(d2.toLong()));
 	
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "PETICAO_PROCESSO_WORKFLOW", schema = "AUTUACAO",
 		joinColumns = @JoinColumn(name = "SEQ_PETICAO"))
 	private Set<ProcessoWorkflowId> processosWorkflow = new TreeSet<ProcessoWorkflowId>(
 			(p1, p2) -> p1.toLong().compareTo(p2.toLong()));
-	
-	@Embedded
-	@AttributeOverride(name = "sigla",
-		column = @Column(name = "SIG_CLASSE_SUGERIDA"))
-	protected ClasseId classeSugerida;
-	
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,
-		targetEntity = PartePeticao.class)
-	@JoinColumn(name = "SEQ_PETICAO")
-	protected Set<Parte> partes = new HashSet<Parte>(0);
-	
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "PETICAO_DOCUMENTO", schema = "AUTUACAO",
-		joinColumns = @JoinColumn(name = "SEQ_PETICAO"))
-	protected Set<DocumentoId> documentos = new TreeSet<DocumentoId>(
-			(d1, d2) -> d1.toLong().compareTo(d2.toLong()));
 	
 	public Peticao(final PeticaoId id, final Long numero) {
 		Validate.notNull(id, "peticao.id.required");
@@ -201,16 +201,8 @@ public abstract class Peticao implements Entity<Peticao> {
 	 */
 	public Processo distribuir(final MinistroId relator) {
 		Validate.notNull(relator, "peticao.ministroRelator.required");
-
-		Set<DocumentoId> documentos = Collections.emptySet();
 		
-		if (getClass().equals(PeticaoEletronica.class)) {
-			documentos = ((PeticaoEletronica) this).documentos();
-		}
-		Set<ParteProcesso> partesProcesso = new HashSet<ParteProcesso>();
-		partes.stream().forEach(parte -> partesProcesso.add(new ParteProcesso(parte.pessoaId(), parte.polo())));
-		
-		return ProcessoFactory.criarProcesso(classeProcessual, relator, id, partesProcesso, documentos);
+		return ProcessoFactory.criarProcesso(classeProcessual, relator, this);
 	}
 
 	public Set<ProcessoWorkflowId> processosWorkflow() {
@@ -225,6 +217,17 @@ public abstract class Peticao implements Entity<Peticao> {
 		Validate.notNull(processoWorkflowId, "peticao.processoWorkflowId.required");
 	
 		this.processosWorkflow.add(processoWorkflowId);
+	}
+	
+	/**
+	 * Sugestão de classe
+	 * 
+	 * @param classeSugerida
+	 */
+	protected void sugerirClasse(final ClasseId classeSugerida) {
+		Validate.notNull(classeSugerida, "peticao.classeSugerida.required");
+		
+		this.classeSugerida = classeSugerida;
 	}
 
 	@Override
@@ -250,7 +253,7 @@ public abstract class Peticao implements Entity<Peticao> {
 	}
 
 	// Hibernate
-	
+
 	Peticao() {
 		
 	}

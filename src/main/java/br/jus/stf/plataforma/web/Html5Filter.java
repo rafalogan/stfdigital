@@ -65,6 +65,7 @@ public class Html5Filter extends OncePerRequestFilter {
 		new AntPathRequestMatcher("/tmp/**"), 
 		new AntPathRequestMatcher("/vendor/**"),
 		new AntPathRequestMatcher("/apidocs/**"),
+		new AntPathRequestMatcher("/api-docs/**"),
 		new AntPathRequestMatcher("/")
 	);
 	

@@ -51,7 +51,7 @@ public class PeticaoFisica extends Peticao {
 	public void preautuar(final ClasseId classeSugerida) {
 		Validate.notNull(classeSugerida, "peticao.classeSugerida.required");
 		
-		this.classeSugerida = classeSugerida;
+		super.sugerirClasse(classeSugerida);
 	}
 	
 	PeticaoFisica() {

@@ -29,13 +29,14 @@ public class ProcessoWorkflow implements Entity<ProcessoWorkflow> {
 	@Transient
 	private ProcessInstance processInstance;
 	
-	public ProcessoWorkflow(final ProcessInstance processInstance){
+	public ProcessoWorkflow(final ProcessInstance processInstance, final String status){
 		Validate.notNull(processInstance, "processoWorkflow.processInstance.required");
+		Validate.notBlank(status, "processoWorkflow.status.required");
 		
 		Long id = Long.parseLong(processInstance.getId());
 		this.id = new ProcessoWorkflowId(id);
 		this.processInstance = processInstance;
-		atualizarStatus();
+		this.status = status;
 	}
 
 	public ProcessoWorkflowId id() {
@@ -49,10 +50,9 @@ public class ProcessoWorkflow implements Entity<ProcessoWorkflow> {
 	/**
 	 * Atualiza o status do processo de acordo com o processInstance carregado
 	 */
-	public void atualizarStatus() {
-		Validate.notNull(processInstance, "processoWorkflow.processInstance.required");
+	public void atualizarStatus(String status) {
+		Validate.notBlank(status, "processoWorkflow.status.required");
 		
-		String status = (String) processInstance.getProcessVariables().get("status");
 		this.status = status;
 	}
 	

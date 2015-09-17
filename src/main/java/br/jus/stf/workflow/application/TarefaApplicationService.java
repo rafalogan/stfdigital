@@ -7,10 +7,8 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.jus.stf.shared.domain.model.ProcessoWorkflowId;
-import br.jus.stf.shared.domain.model.TarefaId;
-import br.jus.stf.workflow.domain.model.ProcessoWorkflow;
 import br.jus.stf.workflow.domain.model.ProcessoRepository;
+import br.jus.stf.workflow.domain.model.ProcessoWorkflow;
 import br.jus.stf.workflow.domain.model.Tarefa;
 import br.jus.stf.workflow.domain.model.TarefaRepository;
 
@@ -34,15 +32,18 @@ public class TarefaApplicationService {
 		return tarefaRepository.listar(papel);
 	}
 
-	public void completar(Tarefa tarefa) {
-		tarefaRepository.completar(tarefa);
+	public void completar(Tarefa tarefa, String status) {
+		tarefaRepository.completar(tarefa, status);
 		ProcessoWorkflow processo = processoRepository.consultar(tarefa.processo());	
-		processo.atualizarStatus();
+		processo.atualizarStatus(status);
 		processoRepository.salvar(processo);
 	}
 	
-	public void sinalizar(Tarefa tarefa, String sinal){
-		tarefaRepository.sinalizar(tarefa, sinal);
+	public void sinalizar(Tarefa tarefa, String sinal, String status){
+		tarefaRepository.sinalizar(tarefa, sinal, status);
+		ProcessoWorkflow processo = processoRepository.consultar(tarefa.processo());	
+		processo.atualizarStatus(status);
+		processoRepository.salvar(processo);
 	}
 	
 }

@@ -16,9 +16,10 @@ public interface ProcessoRepository {
 	/**
 	 * Cria uma instância do processo.
 	 * @param mensagem mensagem que iniciará o processo.
+	 * @param status status inicial do processo
 	 * @return Identificador da instância do processo de autuação criado.
 	 */
-	ProcessoWorkflowId criar(String mensagem);
+	ProcessoWorkflowId criar(String mensagem, String status);
 
 	ProcessoWorkflow consultar(ProcessoWorkflowId id);
 	

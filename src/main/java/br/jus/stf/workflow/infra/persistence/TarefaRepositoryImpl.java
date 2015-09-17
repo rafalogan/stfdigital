@@ -1,6 +1,8 @@
 package br.jus.stf.workflow.infra.persistence;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -37,13 +39,17 @@ public class TarefaRepositoryImpl implements TarefaRepository {
 	}
 
 	@Override
-	public void completar(Tarefa tarefa) {
-		taskService.complete(tarefa.id().toString());
+	public void completar(Tarefa tarefa, String status) {
+		Map<String, Object> variaveis = new HashMap<String, Object>();
+		variaveis.put("status", status);
+		taskService.complete(tarefa.id().toString(), variaveis);
 	}
 	
 	@Override
-	public void sinalizar(Tarefa tarefa, String sinal) {
-		runtimeService.signalEventReceived(sinal, tarefa.definicao().getExecutionId());
+	public void sinalizar(Tarefa tarefa, String sinal, String status) {
+		Map<String, Object> variaveis = new HashMap<String, Object>();
+		variaveis.put("status", status);
+		runtimeService.signalEventReceived(sinal, tarefa.definicao().getExecutionId(), variaveis);
 	}
 
 	@Override

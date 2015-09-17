@@ -44,7 +44,7 @@ public class ProcessoRestResource {
 		if (!result.isEmpty()) {
 			throw new IllegalArgumentException(result.toString());
 		}
-		return processoServiceFacade.iniciar(command.getMensagem());
+		return processoServiceFacade.iniciar(command.getMensagem(), command.getStatus());
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import br.jus.stf.autuacao.domain.TarefaAdapter;
 import br.jus.stf.shared.domain.model.TarefaId;
 import br.jus.stf.workflow.interfaces.TarefaRestResource;
+import br.jus.stf.workflow.interfaces.commands.CompletarTarefaCommand;
 import br.jus.stf.workflow.interfaces.commands.SinalizarCommand;
 import br.jus.stf.workflow.interfaces.dto.TarefaDto;
 
@@ -22,19 +23,17 @@ public class TarefaRestAdapter implements TarefaAdapter {
 	private TarefaRestResource tarefaRestService;
 
 	@Override
-	public void completar(TarefaId id) {
-		//CompletarTarefaCommand command = new CompletarTarefaCommand();
-
-		///command.setIdTarefa(id);
-
-		// [TODO] Rodrigo Barrerios: Substituir pelo Mecanismo de Integração
-		tarefaRestService.completar(id.toLong());
+	public void completar(TarefaId id, PeticaoStatus status) {
+		CompletarTarefaCommand command = new CompletarTarefaCommand();
+		command.setStatus(status.toString());
+		tarefaRestService.completar(id.toLong(), command);
 	}
 
 	@Override
-	public void sinalizar(TarefaId id, String sinal) {
+	public void sinalizar(TarefaId id, String sinal, PeticaoStatus status) {
 		SinalizarCommand command = new SinalizarCommand();
 		command.setSinal(sinal);
+		command.setStatus(status.toString());
 
 		// [TODO] Rodrigo Barrerios: Substituir pelo Mecanismo de Integração
 		tarefaRestService.sinalizar(id.toLong(), command);

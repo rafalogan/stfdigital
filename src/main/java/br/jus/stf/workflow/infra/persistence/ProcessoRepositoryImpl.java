@@ -1,5 +1,8 @@
 package br.jus.stf.workflow.infra.persistence;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.persistence.EntityManager;
 
 import org.activiti.engine.RuntimeService;
@@ -35,9 +38,11 @@ public class ProcessoRepositoryImpl extends SimpleJpaRepository<ProcessoWorkflow
 	}
 	
 	@Override
-	public ProcessoWorkflowId criar(String mensagem) {
-		ProcessInstance processInstance = runtimeService.startProcessInstanceByMessage(mensagem);
-		ProcessoWorkflow processo = new ProcessoWorkflow(processInstance);
+	public ProcessoWorkflowId criar(String mensagem, String status) {
+		Map<String, Object> variaveis = new HashMap<String, Object>();
+		variaveis.put("status", status);
+		ProcessInstance processInstance = runtimeService.startProcessInstanceByMessage(mensagem, variaveis);
+		ProcessoWorkflow processo = new ProcessoWorkflow(processInstance, status);
 		super.save(processo);
 		return processo.id();
 	}

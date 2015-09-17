@@ -36,14 +36,14 @@ public class TarefaServiceFacade {
         		.collect(Collectors.toList());
 	}
 	
-	public void completar(Long id) {
+	public void completar(Long id, String status) {
 		Tarefa tarefa = carregarTarefa(id);
-        tarefaApplicationService.completar(tarefa);
+        tarefaApplicationService.completar(tarefa, status);
 	}
     
-	public void sinalizar(Long id, String sinal) {
+	public void sinalizar(Long id, String sinal, String status) {
 		Tarefa tarefa = carregarTarefa(id);
-		tarefaApplicationService.sinalizar(tarefa, sinal);
+		tarefaApplicationService.sinalizar(tarefa, sinal, status);
 	}
 	
 	public TarefaDto consultar(Long id) {

@@ -5,7 +5,6 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.jus.stf.autuacao.domain.model.Processo;
 import br.jus.stf.shared.domain.model.ProcessoWorkflowId;
 import br.jus.stf.workflow.domain.model.ProcessoRepository;
 
@@ -26,10 +25,11 @@ public class ProcessoApplicationService {
 	/**
 	 * Inicia uma nova instância do processo
 	 * @param mensagem Mensagem que inicia um processo
+	 * @param status Status inicial do processo
 	 * @return Identificador da instância do processo.
 	 */
-	public ProcessoWorkflowId iniciar(String mensagem) {
-		return processoRepository.criar(mensagem);
+	public ProcessoWorkflowId iniciar(String mensagem, String status) {
+		return processoRepository.criar(mensagem, status);
 	}
 	
 }

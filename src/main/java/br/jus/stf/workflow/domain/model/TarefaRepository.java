@@ -12,11 +12,11 @@ import br.jus.stf.shared.domain.model.TarefaId;
  */
 public interface TarefaRepository {
 
-	void completar(Tarefa tarefa);
+	void completar(Tarefa tarefa, String status);
 
 	List<Tarefa> listar(String papel);
 	
-	void sinalizar(Tarefa tarefa, String sinal);
+	void sinalizar(Tarefa tarefa, String sinal, String status);
 	
 	Tarefa consultar(TarefaId id);
 }

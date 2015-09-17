@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.jus.stf.workflow.interfaces.commands.CompletarTarefaCommand;
 import br.jus.stf.workflow.interfaces.commands.SinalizarCommand;
 import br.jus.stf.workflow.interfaces.dto.TarefaDto;
 import br.jus.stf.workflow.interfaces.facade.TarefaServiceFacade;
@@ -43,8 +44,12 @@ public class TarefaRestResource {
 	}
 	
     @RequestMapping(value = "/tarefas/{id}/completar", method = RequestMethod.PUT)
-	public void completar(@PathVariable("id") Long id) {
-    	tarefaServiceFacade.completar(id);
+	public void completar(@PathVariable("id") Long id, CompletarTarefaCommand command) {
+		Set<ConstraintViolation<CompletarTarefaCommand>> result = validator.validate(command);
+		if (!result.isEmpty()) {
+			throw new IllegalArgumentException(result.toString());
+		}
+    	tarefaServiceFacade.completar(id, command.getStatus());
 	}
     
     //TODO : Substituir validação pelo @Valid e injeção do BindingResult
@@ -54,7 +59,7 @@ public class TarefaRestResource {
 		if (!result.isEmpty()) {
 			throw new IllegalArgumentException(result.toString());
 		}
-		tarefaServiceFacade.sinalizar(id, command.getSinal());
+		tarefaServiceFacade.sinalizar(id, command.getSinal(), command.getStatus());
 	}
 	
     @RequestMapping(value = "/tarefas/{id}", method = RequestMethod.GET)

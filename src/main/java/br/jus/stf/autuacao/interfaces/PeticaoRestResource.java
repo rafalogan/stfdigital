@@ -27,14 +27,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.jus.stf.autuacao.application.PeticaoApplicationService;
-import br.jus.stf.autuacao.domain.model.FormaRecebimento;
 import br.jus.stf.autuacao.interfaces.commands.AutuarPeticaoCommand;
 import br.jus.stf.autuacao.interfaces.commands.DistribuirPeticaoCommand;
 import br.jus.stf.autuacao.interfaces.commands.PreautuarPeticaoFisicaCommand;
 import br.jus.stf.autuacao.interfaces.commands.RegistrarPeticaoCommand;
 import br.jus.stf.autuacao.interfaces.commands.RegistrarPeticaoFisicaCommand;
 import br.jus.stf.autuacao.interfaces.dto.PeticaoDto;
-import br.jus.stf.autuacao.interfaces.dto.ProcessoDistribuidoDto;
+import br.jus.stf.autuacao.interfaces.dto.PeticaoFisicaDto;
+import br.jus.stf.autuacao.interfaces.dto.ProcessoDto;
 import br.jus.stf.autuacao.interfaces.facade.PeticaoServiceFacade;
 
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -130,98 +130,57 @@ public class PeticaoRestResource {
 	@ApiOperation(value = "Registra uma nova petição eletrônica")
 	@ApiResponses(value = {@ApiResponse(code = 400, message = "Petição Inválida")})
 	@RequestMapping(value = "/api/peticao", method = RequestMethod.POST)
-	public Long peticionar(@RequestBody @Valid RegistrarPeticaoCommand command, BindingResult binding) {
+	public PeticaoDto peticionar(@RequestBody @Valid RegistrarPeticaoCommand command, BindingResult binding) {
 		
 		if (binding.hasErrors()) {
 			throw new IllegalArgumentException("Petição Inválida: " + binding.getAllErrors());
 		}
-		
-		String classeSugerida = command.getClasse();
-		List<String> poloAtivo = new LinkedList<String>();
-		List<String> poloPassivo = new LinkedList<String>();
-		List<String> documentos = new LinkedList<String>();
 				
-		for(int i = 0; i < command.getPartesPoloAtivo().size(); i++) {
-			poloAtivo.add(command.getPartesPoloAtivo().get(i));
-		}
-				
-		for(int i = 0; i < command.getPartesPoloPassivo().size(); i++){
-			poloPassivo.add(command.getPartesPoloPassivo().get(i));
-		}
-		
-		for(int i = 0; i < command.getDocumentos().size(); i++){
-			documentos.add(command.getDocumentos().get(i));
-		}
-				
-		return this.peticaoSerivceFacade.peticionar(classeSugerida, poloAtivo, poloPassivo, documentos);
+		return peticaoSerivceFacade.peticionar(command.getClasse(), command.getPartesPoloAtivo(), command.getPartesPoloPassivo(), command.getDocumentos());
 	}
 
     @ApiOperation(value = "Registra uma nova petição física", hidden = true)
 	@RequestMapping(value = "/api/peticao/fisica", method = RequestMethod.POST)
-	public Long registrar(@Valid @RequestBody RegistrarPeticaoFisicaCommand command, BindingResult binding) {
+	public PeticaoFisicaDto registrar(@Valid @RequestBody RegistrarPeticaoFisicaCommand command, BindingResult binding) {
     	
     	if (binding.hasErrors()) {
 			throw new IllegalArgumentException("Petição Inválida: " + binding.getAllErrors());
 		}
     	
-    	Integer volumes = command.getQuantidadeVolumes();
-    	Integer apensos = command.getQuantidadeApensos();
-    	String numeroSedex = command.getNumeroSedex();
-    	FormaRecebimento formaRecebimento = null;
-    	
-    	switch(command.getFormaRecebimento()){
-    	case "1": //Balcão.
-    		formaRecebimento = FormaRecebimento.BALCAO;
-    		break;
-    	case "2": //Sedex
-    		formaRecebimento = FormaRecebimento.SEDEX;
-    		break;
-    	case "3": //Malote
-    		formaRecebimento = FormaRecebimento.MALOTE;
-    		break;
-    	case "4": //Fax
-    		formaRecebimento = FormaRecebimento.FAX;
-    		break;
-    	case "5": //Email
-    		formaRecebimento = FormaRecebimento.EMAIL;
-    		break;
-    	}
-    	
-    	return this.peticaoSerivceFacade.registrar(volumes, apensos, formaRecebimento, numeroSedex);
+    	return peticaoSerivceFacade.registrar(command.getQuantidadeVolumes(), command.getQuantidadeApensos(), command.getFormaRecebimento(), command.getNumeroSedex());
 	}
 
     @ApiOperation(value = "Recupera as informações de uma determinada petição")
 	@RequestMapping(value = "/api/peticao/{id}", method = RequestMethod.GET)
 	public PeticaoDto consultar(@PathVariable Long id) {
-		return this.peticaoSerivceFacade.consultar(id);
+		return peticaoSerivceFacade.consultar(id);
 	}
 
     @ApiOperation(value = "Conclui a pré-autuação de uma determinada petição física", hidden = true)
 	@RequestMapping(value = "/api/peticao/{id}/preautuacao", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
 	public void preautuar(@PathVariable Long id, @RequestBody PreautuarPeticaoFisicaCommand command) {
-		this.peticaoSerivceFacade.preautuar(id, command.getClasseSugerida()); 
+		peticaoSerivceFacade.preautuar(id, command.getClasseSugerida(), command.getTarefa()); 
 	}
 
     @ApiOperation(value = "Conclui a autuação de uma determinada petição")
 	@RequestMapping(value = "/api/peticao/{id}/autuacao", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
 	public void autuar(@PathVariable Long id, @RequestBody AutuarPeticaoCommand command) {
-		this.peticaoSerivceFacade.autuar(id, command.getClasse(), command.isValida(), command.getMotivo());
+		peticaoSerivceFacade.autuar(id, command.getClasse(), command.isValida(), command.getMotivo(), command.getTarefa());
 	}
 
     @ApiOperation(value = "Conclui a devolução de uma determinada petição recebida incorretamente", hidden = true)
 	@RequestMapping(value = "/api/peticao/{id}/devolucao", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
 	public void devolver(@PathVariable Long id) {
-		//this.peticaoSerivceFacade.devolver(id);
+		//peticaoSerivceFacade.devolver(id);
 	}
 
     @ApiOperation(value = "Conclui a distribuição de uma determinada petição")
 	@RequestMapping(value = "/api/peticao/{id}/distribuicao", method = RequestMethod.POST)
-	public ProcessoDistribuidoDto distribuir(@PathVariable Long id, @RequestBody DistribuirPeticaoCommand command) {
-    	
-    	return this.peticaoSerivceFacade.distribuir(id, command.getIdRelator());
+	public ProcessoDto distribuir(@PathVariable Long id, @RequestBody DistribuirPeticaoCommand command) {
+    	return this.peticaoSerivceFacade.distribuir(id, command.getMinistro(), command.getTarefa());
     }
 
     private String status(String id) {

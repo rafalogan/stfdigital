@@ -14,10 +14,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.jus.stf.workflow.application.ProcessoApplicationService;
 import br.jus.stf.workflow.interfaces.commands.IniciarProcessoCommand;
 import br.jus.stf.workflow.interfaces.dto.ProcessoDto;
-import br.jus.stf.workflow.interfaces.dto.ProcessoDtoAssembler;
+import br.jus.stf.workflow.interfaces.facade.ProcessoServiceFacade;
 
 /**
  * @author Rodrigo Barreiros
@@ -31,10 +30,7 @@ import br.jus.stf.workflow.interfaces.dto.ProcessoDtoAssembler;
 public class ProcessoRestResource {
 
 	@Autowired
-	private ProcessoApplicationService processoApplicationService;
-	
-	@Autowired
-	private ProcessoDtoAssembler processoDtoAssembler;
+	private ProcessoServiceFacade processoServiceFacade;
 	
 	@Autowired
 	private Validator validator;
@@ -42,20 +38,18 @@ public class ProcessoRestResource {
 	//TODO : Substituir validação pelo @Valid e injeção do BindingResult
 	@RequestMapping(value = "", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	public String iniciar(@RequestBody IniciarProcessoCommand command) {
-		validate(command);
-		return processoApplicationService.iniciar(command.getMensagem());
-	}
-	
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public ProcessoDto consultar(@PathVariable("id") String id) { 
-		return processoDtoAssembler.toDto(processoApplicationService.consultar(id));
-	}
-	
-	private void validate(Object object) {
-		Set<ConstraintViolation<Object>> result = validator.validate(object);
+	public Long iniciar(@RequestBody IniciarProcessoCommand command) {
+		
+		Set<ConstraintViolation<Object>> result = validator.validate(command);
 		if (!result.isEmpty()) {
 			throw new IllegalArgumentException(result.toString());
 		}
+		return processoServiceFacade.iniciar(command.getMensagem());
 	}
+	
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public ProcessoDto consultar(@PathVariable("id") Long id) { 
+		return processoServiceFacade.consultar(id);
+	}
+	
 }

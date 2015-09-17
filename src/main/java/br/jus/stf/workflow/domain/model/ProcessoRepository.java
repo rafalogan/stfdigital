@@ -1,6 +1,6 @@
 package br.jus.stf.workflow.domain.model;
 
-import org.activiti.engine.runtime.ProcessInstance;
+import br.jus.stf.shared.domain.model.ProcessoWorkflowId;
 
 
 
@@ -14,12 +14,14 @@ import org.activiti.engine.runtime.ProcessInstance;
 public interface ProcessoRepository {
 	
 	/**
-	 * Cria uma instãncia do processo de autuação de originários.
-	 * @param mensagem Nome da mensagem que iniciaráo evento de criação do processo.
+	 * Cria uma instância do processo.
+	 * @param mensagem mensagem que iniciará o processo.
 	 * @return Identificador da instância do processo de autuação criado.
 	 */
-	ProcessInstance criar(String mensagem);
+	ProcessoWorkflowId criar(String mensagem);
 
-	ProcessInstance consultar(String processInstanceId);
+	ProcessoWorkflow consultar(ProcessoWorkflowId id);
+	
+	ProcessoWorkflow salvar(ProcessoWorkflow processo);
 	
 }

@@ -25,6 +25,9 @@ public class AutuarPeticaoCommand {
 	
 	@ApiModelProperty(value = "Contém o motivo da recusa da petição, no caso de petições inválidas", required=true)
 	private String motivo;
+
+	@ApiModelProperty(value = "O id da tarefa do autuador", required=true)
+	private Long tarefa;
 	
 	public String getClasse() {
 		return classe;
@@ -36,6 +39,10 @@ public class AutuarPeticaoCommand {
 	
 	public String getMotivo() {
 		return motivo;
+	}
+	
+	public Long getTarefa() {
+		return tarefa;
 	}
 
 	@Override

@@ -7,7 +7,6 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.jus.stf.autuacao.domain.PeticaoService;
 import br.jus.stf.autuacao.domain.ProcessoAdapter;
 import br.jus.stf.autuacao.domain.TarefaAdapter;
 import br.jus.stf.autuacao.domain.model.FormaRecebimento;
@@ -20,6 +19,7 @@ import br.jus.stf.autuacao.domain.model.Processo;
 import br.jus.stf.shared.domain.model.ClasseId;
 import br.jus.stf.shared.domain.model.MinistroId;
 import br.jus.stf.shared.domain.model.ProcessoWorkflowId;
+import br.jus.stf.shared.domain.model.TarefaId;
 
 /**
  * @author Rodrigo Barreiros
@@ -30,9 +30,6 @@ import br.jus.stf.shared.domain.model.ProcessoWorkflowId;
 @Component
 @Transactional
 public class PeticaoApplicationService {
-
-	@Autowired
-	private PeticaoService peticaoService;
 	
 	@Autowired
 	private PeticaoRepository peticaoRepository;
@@ -56,16 +53,15 @@ public class PeticaoApplicationService {
 	 * 
 	 * @return Id da petição eletrônica registrada.
 	 */
-	public Peticao peticionar(ClasseId classeSugerida, List<String> poloAtivo, List<String> poloPassivo, List<String> documentos) {
+	public PeticaoEletronica peticionar(ClasseId classeSugerida, List<String> poloAtivo, List<String> poloPassivo, List<String> documentos) {
 		String tipoRecebimento = "remessaEletronica";
-		String idProcesso = "";
 		
 		PeticaoEletronica peticao = peticaoFactory.criarPeticaoEletronica(classeSugerida, poloAtivo, poloPassivo, documentos);
 		
-		idProcesso = processoAdapter.iniciar(tipoRecebimento);
-		peticao.associarProcessoWorkflow(new ProcessoWorkflowId(idProcesso));
-		
+		ProcessoWorkflowId id = processoAdapter.iniciar(tipoRecebimento);
+		peticao.associarProcessoWorkflow(id);
 		peticaoRepository.save(peticao);
+		
 		peticaoApplicationEvent.peticaoRecebida(peticao);
 		return peticao;
 	}
@@ -77,16 +73,15 @@ public class PeticaoApplicationService {
 	 * 
 	 * @return Id da petição física registrada.
 	 */
-	public Peticao registrar(Integer volumes, Integer apensos, FormaRecebimento formaRecebimento, String numeroSedex){
+	public PeticaoFisica registrar(Integer volumes, Integer apensos, FormaRecebimento formaRecebimento, String numeroSedex){
 		String tipoRecebimento = "remessaFisica";
-		String idProcesso = "";
 
 		PeticaoFisica peticao = peticaoFactory.criarPeticaoFisica(volumes, apensos, formaRecebimento, numeroSedex);
 		
-		idProcesso = processoAdapter.iniciar(tipoRecebimento);
-		peticao.associarProcessoWorkflow(new ProcessoWorkflowId(idProcesso));
-		
+		ProcessoWorkflowId id = processoAdapter.iniciar(tipoRecebimento);
+		peticao.associarProcessoWorkflow(id);
 		peticaoRepository.save(peticao);
+		
 		peticaoApplicationEvent.peticaoRecebida(peticao);
 		return peticao;
 	}
@@ -94,10 +89,13 @@ public class PeticaoApplicationService {
 	/**
 	 * Realiza a preautuação de uma petição física.
 	 * @param peticaoFisica Dados da petição física.
+	 * @param classeSugerida
+	 * @param tarefaId
 	 */
-	public void preautuar(PeticaoFisica peticaoFisica) {
-		this.peticaoRepository.save(peticaoFisica);
-		this.tarefaAdapter.completar(peticaoFisica.processosWorkflow().iterator().next().toString());
+	public void preautuar(PeticaoFisica peticao, ClasseId classeSugerida, TarefaId tarefaId) {
+		peticao.preautuar(classeSugerida);
+		peticaoRepository.save(peticao);
+		tarefaAdapter.completar(tarefaId);
 	}
 
 	/**
@@ -105,29 +103,27 @@ public class PeticaoApplicationService {
 	 * @param peticao Dados da petição.
 	 * @param peticaoValida Indica se uma petição foi considerada válida.
 	 */
-	public void autuar(Peticao peticao, boolean peticaoValida) {
-		
-		String idPeticao = peticao.id().toString();
-		
-		this.peticaoRepository.save(peticao);
-		
-		if (peticaoValida) {
-			this.tarefaAdapter.completar(idPeticao);
+	public void autuar(Peticao peticao, ClasseId classe, boolean peticaoValida, String motivoRejeicao, TarefaId tarefaId) {
+		if (peticaoValida){
+			peticao.aceitar(classe);
+			tarefaAdapter.completar(tarefaId);
 		} else {
-			this.tarefaAdapter.sinalizar("Petição Inválida", idPeticao);
+			peticao.rejeitar(motivoRejeicao);
+			tarefaAdapter.sinalizar(tarefaId, "peticaoInvalida");
 		}
+		peticaoRepository.save(peticao);
 	}
 
 	/**
 	 * Distribui um processo para um Ministro Relator.
 	 * @param peticao Dados da petição.
 	 * @param ministroRelator Dados do Ministro Relator do processo.
+	 * @param tarefaId
+	 * @return processo
 	 */
-	public Processo distribuir(Peticao peticao, MinistroId ministroRelator) {
-		Processo processo = peticao.distribuir(ministroRelator);
-		peticaoRepository.save(peticao);
-		tarefaAdapter.completar(peticao.id().toString());
-		return processo;
+	public Processo distribuir(Peticao peticao, MinistroId ministroRelator, TarefaId tarefaId) {
+		tarefaAdapter.completar(tarefaId);
+		return peticao.distribuir(ministroRelator);
 	}
 
 	/**
@@ -135,9 +131,10 @@ public class PeticaoApplicationService {
 	 * @param peticao Dados da petição.
 	 * @param motivoRejeicao Motivo da rejeição da petição.
 	 */
-	public void devolver(Peticao peticao, String motivoRejeicao) {
+	public void devolver(Peticao peticao, String motivoRejeicao, TarefaId tarefaId) {
 		peticao.rejeitar(motivoRejeicao);
-		this.tarefaAdapter.completar(peticao.id().toString());
+		peticaoRepository.save(peticao);
+		tarefaAdapter.completar(tarefaId);
 	}
 	
 }

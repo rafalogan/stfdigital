@@ -1,11 +1,14 @@
-package br.jus.stf.shared.domain.model;
+package br.jus.stf.workflow.domain.model;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import org.activiti.engine.runtime.ProcessInstance;
 import org.apache.commons.lang3.Validate;
 
+import br.jus.stf.shared.domain.model.ProcessoWorkflowId;
 import br.jus.stf.shared.domain.stereotype.Entity;
 
 /**
@@ -23,11 +26,16 @@ public class ProcessoWorkflow implements Entity<ProcessoWorkflow> {
 	@Column(name = "DSC_STATUS_PROCESS_INSTANCE")
 	private String status;
 	
-	public ProcessoWorkflow(final ProcessoWorkflowId id, final String status){
-		Validate.notNull(id, "processoWorkflow.id.required");
+	@Transient
+	private ProcessInstance processInstance;
+	
+	public ProcessoWorkflow(final ProcessInstance processInstance){
+		Validate.notNull(processInstance, "processoWorkflow.processInstance.required");
 		
-		this.id = id;
-		this.status = status;
+		Long id = Long.parseLong(processInstance.getId());
+		this.id = new ProcessoWorkflowId(id);
+		this.processInstance = processInstance;
+		atualizarStatus();
 	}
 
 	public ProcessoWorkflowId id() {
@@ -36,6 +44,27 @@ public class ProcessoWorkflow implements Entity<ProcessoWorkflow> {
 
 	public String status() {
 		return status;
+	}
+	
+	/**
+	 * Atualiza o status do processo de acordo com o processInstance carregado
+	 */
+	public void atualizarStatus() {
+		Validate.notNull(processInstance, "processoWorkflow.processInstance.required");
+		
+		String status = (String) processInstance.getProcessVariables().get("status");
+		this.status = status;
+	}
+	
+	public ProcessInstance instance() {
+		return processInstance;
+	}
+	
+	public void setInstance(ProcessInstance processInstance) {
+		Validate.notNull(processInstance, "processoWorkflow.processInstance.required");
+		Validate.isTrue(id.toString().equals(processInstance.getId()));
+		
+		this.processInstance = processInstance;
 	}
 
 	@Override

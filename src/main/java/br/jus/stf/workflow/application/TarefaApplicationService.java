@@ -4,14 +4,14 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.activiti.engine.runtime.ProcessInstance;
-import org.activiti.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.jus.stf.shared.domain.model.ProcessoWorkflowId;
+import br.jus.stf.shared.domain.model.TarefaId;
+import br.jus.stf.workflow.domain.model.ProcessoWorkflow;
 import br.jus.stf.workflow.domain.model.ProcessoRepository;
-import br.jus.stf.workflow.domain.model.ProcessoWorkflowRepository;
+import br.jus.stf.workflow.domain.model.Tarefa;
 import br.jus.stf.workflow.domain.model.TarefaRepository;
 
 /**
@@ -29,30 +29,20 @@ public class TarefaApplicationService {
 	
 	@Autowired
 	private ProcessoRepository processoRepository;
-	
-	@Autowired
-	private ProcessoWorkflowRepository processoWorkflowRepository;
 
-	public List<Task> listar(String papel) {
+	public List<Tarefa> listar(String papel) {
 		return tarefaRepository.listar(papel);
 	}
 
-	public void completar(String taskId) {
-		tarefaRepository.completar(taskId);
-		Task task = consultar(taskId);
-		ProcessInstance processInstance = processoRepository.consultar(task.getProcessInstanceId());
-		String status = (String) processInstance.getProcessVariables().get("status");
-		ProcessoWorkflowId id = new ProcessoWorkflowId(processInstance.getId());
-		
-		processoWorkflowRepository.updateStatus(id, status);
+	public void completar(Tarefa tarefa) {
+		tarefaRepository.completar(tarefa);
+		ProcessoWorkflow processo = processoRepository.consultar(tarefa.processo());	
+		processo.atualizarStatus();
+		processoRepository.salvar(processo);
 	}
 	
-	public void sinalizar(String sinal, String taskId){
-		Task task = consultar(taskId);
-		this.tarefaRepository.sinalizar(sinal, task.getExecutionId());
+	public void sinalizar(Tarefa tarefa, String sinal){
+		tarefaRepository.sinalizar(tarefa, sinal);
 	}
-
-	public Task consultar(String taskId){
-		return tarefaRepository.consultar(taskId);
-	}
+	
 }

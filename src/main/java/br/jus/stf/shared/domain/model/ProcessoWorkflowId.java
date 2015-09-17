@@ -19,10 +19,10 @@ public class ProcessoWorkflowId implements ValueObject<ProcessoWorkflowId> {
 	
 	@Column(name = "NUM_PROCESS_INSTANCE", nullable = false)
 	private Long id;
-
-	public ProcessoWorkflowId(final String id) {
+	
+	public ProcessoWorkflowId(final Long id) {
 		Validate.notNull(id, "processoWorkflowId.id.required");
-		this.id = Long.valueOf(id);
+		this.id = id;
 	}
 	
 	public Long toLong(){

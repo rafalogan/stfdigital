@@ -2,7 +2,7 @@ package br.jus.stf.workflow.domain.model;
 
 import java.util.List;
 
-import org.activiti.engine.task.Task;
+import br.jus.stf.shared.domain.model.TarefaId;
 
 /**
  * @author Rodrigo Barreiros
@@ -12,11 +12,11 @@ import org.activiti.engine.task.Task;
  */
 public interface TarefaRepository {
 
-	void completar(String taskId);
+	void completar(Tarefa tarefa);
 
-	List<Task> listar(String papel);
+	List<Tarefa> listar(String papel);
 	
-	void sinalizar(String sinal, String executionId);
+	void sinalizar(Tarefa tarefa, String sinal);
 	
-	Task consultar(String taskId);
+	Tarefa consultar(TarefaId id);
 }

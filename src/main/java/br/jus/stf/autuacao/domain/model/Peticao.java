@@ -96,6 +96,14 @@ public abstract class Peticao implements Entity<Peticao> {
 		return this.id;
 	}
 	
+	public Long numero() {
+		return numero;
+	}
+	
+	public Short ano() {
+		return ano.shortValue();
+	}
+	
 	public String identificacao() {
 		return new StringBuilder()
 				.append(numero)
@@ -217,6 +225,10 @@ public abstract class Peticao implements Entity<Peticao> {
 		Validate.notNull(processoWorkflowId, "peticao.processoWorkflowId.required");
 	
 		this.processosWorkflow.add(processoWorkflowId);
+	}
+	
+	public boolean isEletronica() {
+		return this.getClass().equals(PeticaoEletronica.class);
 	}
 	
 	/**

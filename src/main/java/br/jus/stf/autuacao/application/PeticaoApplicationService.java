@@ -97,7 +97,7 @@ public class PeticaoApplicationService {
 	 */
 	public void preautuar(PeticaoFisica peticaoFisica) {
 		this.peticaoRepository.save(peticaoFisica);
-		//this.tarefaAdapter.completar(peticaoFisica.processosWorkflow().iterator().next().toString());
+		this.tarefaAdapter.completar(peticaoFisica.processosWorkflow().iterator().next().toString());
 	}
 
 	/**
@@ -133,8 +133,10 @@ public class PeticaoApplicationService {
 	/**
 	 * Devolve uma petição.
 	 * @param peticao Dados da petição.
+	 * @param motivoRejeicao Motivo da rejeição da petição.
 	 */
-	public void devolver(Peticao peticao) {
+	public void devolver(Peticao peticao, String motivoRejeicao) {
+		peticao.rejeitar(motivoRejeicao);
 		this.tarefaAdapter.completar(peticao.id().toString());
 	}
 	

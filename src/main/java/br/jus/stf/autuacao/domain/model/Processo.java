@@ -36,7 +36,7 @@ import br.jus.stf.shared.domain.stereotype.Entity;
 @javax.persistence.Entity
 @Table(name = "PROCESSO", schema = "AUTUACAO",
 	uniqueConstraints = @UniqueConstraint(columnNames = {"SIG_CLASSE", "NUM_PROCESSO"}))
-public class Processo implements Entity<Processo> {
+public class Processo implements Entity<Processo, ProcessoId> {
 
 	@EmbeddedId
 	@AttributeOverride(name = "id",

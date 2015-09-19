@@ -13,7 +13,8 @@ import reactor.bus.Event;
 import reactor.bus.EventBus;
 import reactor.fn.Consumer;
 import br.jus.stf.pesquisa.interfaces.IndexadorRestResource;
-import br.jus.stf.pesquisa.interfaces.dto.IndexarCommand;
+import br.jus.stf.pesquisa.interfaces.command.IndexarCommand;
+import br.jus.stf.shared.domain.stereotype.Entity;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -26,8 +27,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  */
 @Component
-public class IndexadorConsumer implements Consumer<Event<?>>, InitializingBean {
+public class IndexadorConsumer implements Consumer<Event<Entity<?, ?>>>, InitializingBean {
 
+	private static String INDICE = "autuacao";
+	
 	@Autowired
 	private EventBus eventBus;
 	
@@ -45,22 +48,28 @@ public class IndexadorConsumer implements Consumer<Event<?>>, InitializingBean {
 	}
 	
 	@Override
-	public void accept(Event<?> event) {
-		Object object = event.getData();
-		IndexarCommand indexarCommand = createCommand(object);
-		indexadorRestResource.indexar(indexarCommand, new BeanPropertyBindingResult(indexarCommand, "indexarCommand"));
+	public void accept(Event<Entity<?, ?>> event) {
+		Entity<?, ?> entity = event.getData();
+		IndexarCommand indexarCommand = createCommand(entity);
+		try {
+			indexadorRestResource.indexar(indexarCommand, new BeanPropertyBindingResult(indexarCommand, "indexarCommand"));
+		} catch (Exception e) {
+			throw new RuntimeException("Não foi possível indexar o objeto!", e);
+		}
 	}
 
-	private IndexarCommand createCommand(Object object) {
-		IndexarCommand indexarCommand = new IndexarCommand();
-		indexarCommand.setIndex(object.getClass().getSimpleName().toLowerCase());
+	private IndexarCommand createCommand(Entity<?, ?> entity) {
+		IndexarCommand command = new IndexarCommand();
+		command.setIndice(INDICE);
+		command.setTipo(entity.getClass().getSimpleName());
+		command.setId(entity.id().toString());
 		try {
-			String json = objectMapper.writeValueAsString(object);
-			indexarCommand.setObject(objectMapper.readTree(json));
+			String json = objectMapper.writeValueAsString(entity);
+			command.setObjeto(objectMapper.readTree(json));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		return indexarCommand;
+		return command;
 	}
 
 }

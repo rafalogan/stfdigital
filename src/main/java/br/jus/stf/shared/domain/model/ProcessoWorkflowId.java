@@ -28,6 +28,11 @@ public class ProcessoWorkflowId implements ValueObject<ProcessoWorkflowId> {
 	public Long toLong(){
 		return id;
 	}
+	
+	@Override
+	public String toString(){
+		return id.toString();
+	}	
 
 	@Override
 	public int hashCode() {
@@ -49,11 +54,6 @@ public class ProcessoWorkflowId implements ValueObject<ProcessoWorkflowId> {
 	@Override
 	public boolean sameValueAs(final ProcessoWorkflowId other){
 		return other != null && this.id.equals(other.id);
-	}
-
-	@Override
-	public String toString(){
-		return id.toString();
 	}
 
 	//Hibernate

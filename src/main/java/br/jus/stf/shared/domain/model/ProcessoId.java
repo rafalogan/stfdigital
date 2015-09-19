@@ -31,6 +31,11 @@ public class ProcessoId implements ValueObject<ProcessoId> {
 	}
 	
 	@Override
+	public String toString(){
+		return id.toString();
+	}
+	
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -51,10 +56,11 @@ public class ProcessoId implements ValueObject<ProcessoId> {
 	public boolean sameValueAs(final ProcessoId other){
 		return other != null && this.id.equals(other.id);
 	}
-
-	@Override
-	public String toString(){
-		return id.toString();
+	
+	//Hibernate
+	
+	ProcessoId() {
+		
 	}
 
 }

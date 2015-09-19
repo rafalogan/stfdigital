@@ -29,6 +29,11 @@ public class MinistroId implements ValueObject<MinistroId>{
 	public Long toLong(){
 		return id;
 	}
+	
+	@Override
+	public String toString(){
+		return id.toString();
+	}
 
 	@Override
 	public int hashCode() {
@@ -53,10 +58,6 @@ public class MinistroId implements ValueObject<MinistroId>{
 	 */
 	public boolean sameValueAs(final MinistroId other){
 		return other != null && this.id.equals(other.id);
-	}
-
-	public String toString(){
-		return id.toString();
 	}
 
 	//Hibernate

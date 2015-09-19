@@ -25,13 +25,14 @@ public class PeticaoId implements ValueObject<PeticaoId> {
 		
 		this.id = id;
 	}
-	
-	PeticaoId() {
-		
-	}
 
 	public Long toLong(){
 		return id;
+	}
+	
+	@Override
+	public String toString(){
+		return id.toString();
 	}
 
 	@Override
@@ -54,6 +55,12 @@ public class PeticaoId implements ValueObject<PeticaoId> {
 	@Override
 	public boolean sameValueAs(final PeticaoId other){
 		return other != null && this.id.equals(other.id);
+	}
+	
+	//Hibernate
+	
+	PeticaoId() {
+		
 	}
 
 }

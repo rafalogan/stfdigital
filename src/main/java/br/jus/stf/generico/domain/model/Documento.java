@@ -20,7 +20,7 @@ import br.jus.stf.shared.domain.stereotype.Entity;
  */
 @javax.persistence.Entity
 @Table(name = "DOCUMENTO", schema = "CORPORATIVO")
-public class Documento implements Entity<Documento> {
+public class Documento implements Entity<Documento, DocumentoId> {
 
 	@EmbeddedId
 	@AttributeOverride(name = "id",

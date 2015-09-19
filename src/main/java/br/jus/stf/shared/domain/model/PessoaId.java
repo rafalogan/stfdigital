@@ -31,6 +31,11 @@ public class PessoaId implements ValueObject<PessoaId> {
 	}
 	
 	@Override
+	public String toString(){
+		return id.toString();
+	}	
+	
+	@Override
 	public int hashCode(){
 		final int prime = 31;
 		int result = 1;
@@ -50,10 +55,6 @@ public class PessoaId implements ValueObject<PessoaId> {
 	@Override
 	public boolean sameValueAs(final PessoaId other){
 		return other != null && this.id.equals(other.id);
-	}
-
-	public String toString(){
-		return id.toString();
 	}
 	
 	//Hibernate

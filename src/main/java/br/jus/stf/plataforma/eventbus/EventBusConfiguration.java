@@ -22,7 +22,8 @@ public class EventBusConfiguration {
 	
     @Bean
     EventBus eventBus() {
-	    return EventBus.create(reactorEnvironment(), Environment.sharedDispatcher());
+	    //return EventBus.create(reactorEnvironment(), Environment.sharedDispatcher());
+    	return EventBus.create(); //síncrono por causa do entitymanager compartilhado entre os contextos
     }
 	
 }

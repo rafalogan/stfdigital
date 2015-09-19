@@ -18,7 +18,7 @@ import br.jus.stf.shared.domain.stereotype.Entity;
  */
 @javax.persistence.Entity
 @Table(name = "PROCESSO_WORKFLOW", schema = "PLATAFORMA")
-public class ProcessoWorkflow implements Entity<ProcessoWorkflow> {
+public class ProcessoWorkflow implements Entity<ProcessoWorkflow, ProcessoWorkflowId> {
 
 	@EmbeddedId
 	private ProcessoWorkflowId id;

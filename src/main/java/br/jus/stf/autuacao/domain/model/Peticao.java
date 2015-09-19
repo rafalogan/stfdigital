@@ -42,7 +42,7 @@ import br.jus.stf.shared.domain.stereotype.Entity;
 @DiscriminatorColumn(name = "TIP_MEIO_PETICAO")
 @Table(name = "PETICAO", schema = "AUTUACAO",
 	uniqueConstraints = @UniqueConstraint(columnNames = {"NUM_PETICAO", "NUM_ANO_PETICAO"}))
-public abstract class Peticao implements Entity<Peticao> {
+public abstract class Peticao implements Entity<Peticao, PeticaoId> {
 
 	@EmbeddedId
 	@AttributeOverride(name = "id", 

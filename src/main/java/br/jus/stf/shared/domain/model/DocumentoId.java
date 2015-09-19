@@ -29,7 +29,12 @@ public class DocumentoId implements ValueObject<DocumentoId> {
 	public Long toLong(){
 		return id;
 	}
-
+	
+	@Override
+	public String toString(){
+		return id.toString();
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -50,10 +55,6 @@ public class DocumentoId implements ValueObject<DocumentoId> {
 	@Override
 	public boolean sameValueAs(final DocumentoId other){
 		return other != null && this.id.equals(other.id);
-	}
-
-	public String toString(){
-		return id.toString();
 	}
 
 	//Hibernate

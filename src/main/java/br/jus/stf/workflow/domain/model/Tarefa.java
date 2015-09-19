@@ -11,7 +11,7 @@ import br.jus.stf.shared.domain.stereotype.Entity;
  * @author Lucas.Rodrigues
  *
  */
-public class Tarefa implements Entity<Tarefa> {
+public class Tarefa implements Entity<Tarefa, TarefaId> {
 	
 	private TarefaId id;
 	private Task task;

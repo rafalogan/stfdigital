@@ -1,5 +1,7 @@
 package br.jus.stf.pesquisa.application;
 
+import java.util.Map;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +20,8 @@ public class IndexadorApplicationService {
 	@Autowired
 	private IndexadorRepository indexadorRepository;
 
-	public void criarIndice(String indice, String configuracao) {
-		indexadorRepository.criar(indice, configuracao);
+	public void criarIndice(String indice, String configuracao, Map<String, String> mapeamentos) {
+		indexadorRepository.criar(indice, configuracao, mapeamentos);
 	}
 	
 	public void indexar(String indice, String tipo, String id, String objeto) {

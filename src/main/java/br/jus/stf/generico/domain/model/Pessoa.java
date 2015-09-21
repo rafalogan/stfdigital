@@ -1,6 +1,5 @@
 package br.jus.stf.generico.domain.model;
 
-import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Table;
@@ -20,8 +19,6 @@ import br.jus.stf.shared.domain.stereotype.Entity;
 public class Pessoa implements Entity<Pessoa, PessoaId> {
 
 	@EmbeddedId
-	@AttributeOverride(name = "id",
-			column = @Column(name = "SEQ_PESSOA", insertable = false, updatable = false))
 	private PessoaId id;
 	
 	@Column(name = "NOM_PESSOA", nullable = false)

@@ -3,6 +3,7 @@ package br.jus.stf.pesquisa.domain.model;
 import java.util.Map;
 
 
+
 /**
  * @author Lucas.Rodrigues
  *
@@ -14,8 +15,9 @@ public interface IndexadorRepository {
 	 * 
 	 * @param indice
 	 * @param configuracao
+	 * @param mapeamentos
 	 */
-	void criar(String indice, String configuracao);
+	void criar(String indice, String configuracao, Map<String, String> mapeamentos);
 	
 	/**
 	 * Verifica se um índice existe

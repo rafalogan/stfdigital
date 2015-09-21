@@ -50,25 +50,21 @@ public class IndexadorConsumer implements Consumer<Event<Entity<?, ?>>>, Initial
 	@Override
 	public void accept(Event<Entity<?, ?>> event) {
 		Entity<?, ?> entity = event.getData();
-		IndexarCommand indexarCommand = createCommand(entity);
 		try {
-			indexadorRestResource.indexar(indexarCommand, new BeanPropertyBindingResult(indexarCommand, "indexarCommand"));
+			IndexarCommand indexarCommand = createCommand(entity);
+			indexadorRestResource.indexar(INDICE, indexarCommand, new BeanPropertyBindingResult(indexarCommand, "indexarCommand"));
 		} catch (Exception e) {
+			//event.consumeError(e);
 			throw new RuntimeException("Não foi possível indexar o objeto!", e);
 		}
 	}
 
-	private IndexarCommand createCommand(Entity<?, ?> entity) {
+	private IndexarCommand createCommand(Entity<?, ?> entity) throws IOException {
 		IndexarCommand command = new IndexarCommand();
-		command.setIndice(INDICE);
 		command.setTipo(entity.getClass().getSimpleName());
 		command.setId(entity.id().toString());
-		try {
-			String json = objectMapper.writeValueAsString(entity);
-			command.setObjeto(objectMapper.readTree(json));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		String json = objectMapper.writeValueAsString(entity);
+		command.setObjeto(objectMapper.readTree(json));
 		return command;
 	}
 

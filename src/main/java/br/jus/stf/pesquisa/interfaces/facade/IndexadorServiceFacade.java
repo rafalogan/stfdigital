@@ -1,5 +1,9 @@
 package br.jus.stf.pesquisa.interfaces.facade;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,13 +37,25 @@ public class IndexadorServiceFacade {
 	 * 
 	 * @param indice
 	 * @param configuracao
-	 * @throws JsonProcessingException
+	 * @throws JsonProcessingException 
 	 */
 	public void criarIndice(String indice, JsonNode configuracao) throws JsonProcessingException {
 		Validate.isTrue(!indexadorRepository.existe(indice));
-		indexadorApplicationService.criarIndice(indice, converterJsonString(configuracao));
+		JsonNode config = configuracao.findValue("settings");
+		JsonNode map = configuracao.findValue("mappings");
+		indexadorApplicationService.criarIndice(indice, converterJsonString(config), converterJsonMap(map));
 	}
 	
+	private Map<String, String> converterJsonMap(JsonNode map) throws JsonProcessingException {
+		Map<String, String> mapeamentos = new HashMap<String, String>();
+		Iterator<String> names = map.fieldNames();
+		while(names.hasNext()) {
+			String name = names.next();
+			mapeamentos.put(name, converterJsonString(map.findValue(name)));
+		}
+		return mapeamentos;
+	}
+
 	/**
 	 * Verifica se o índice existe
 	 * 

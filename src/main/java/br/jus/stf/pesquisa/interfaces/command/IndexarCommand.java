@@ -16,10 +16,6 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
  */
 @ApiModel("Comando de indexação de objetos")
 public class IndexarCommand {
-
-	@ApiModelProperty(value = "Índice de destino", required = true)
-	@NotBlank
-	private String indice;
 	
 	@ApiModelProperty(value = "Tipo do objeto", required = true)
 	@NotBlank
@@ -37,25 +33,10 @@ public class IndexarCommand {
 		
 	}
 	
-	public IndexarCommand(final String indice, final String tipo, final String id, final JsonNode objeto) {		
-		this.indice = indice;
+	public IndexarCommand(final String tipo, final String id, final JsonNode objeto) {		
 		this.tipo = tipo;
 		this.id = id;
 		this.objeto = objeto;
-	}
-
-	/**
-	 * @return the indice
-	 */
-	public String getIndice() {
-		return indice;
-	}
-
-	/**
-	 * @param indice the indice to set
-	 */
-	public void setIndice(String indice) {
-		this.indice = indice;
 	}
 	
 	/**

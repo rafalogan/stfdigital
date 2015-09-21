@@ -13,19 +13,12 @@
         "edge_nGram_analyzer": {
           "type": "custom",
           "tokenizer": "edge_ngram_tokenizer",
-          "filter": [
-            "lowercase",
-            "asciifolding",
-            "edgeNGram_filter"
-          ]
+          "filter": [ "lowercase", "asciifolding", "edgeNGram_filter" ]
         },
         "whitespace_analyzer": {
           "type": "custom",
           "tokenizer": "whitespace",
-          "filter": [
-            "lowercase",
-            "asciifolding"
-          ]
+          "filter": [ "lowercase", "asciifolding" ]
         }
       },
       "tokenizer": {
@@ -33,10 +26,7 @@
           "type": "edgeNGram",
           "min_gram": "2",
           "max_gram": "5",
-          "token_chars": [
-            "letter",
-            "digit"
-          ]
+          "token_chars": [ "letter", "whitespace" ,"digit" ]
         }
       }
     }
@@ -47,44 +37,34 @@
         "index_analyzer": "edge_nGram_analyzer",
         "search_analyzer": "whitespace_analyzer"
       },
-      "properties": {
+      "dynamic": false,
+      "properties": {      
         "id": {
           "properties": {
-            "id": {
+            "sequencial": {
               "type": "long",
-              "index": "not_analyzed"
+          	  "index": "not_analyzed"              
             }
           }
         },
-        "classe": {
-          "properties": {
-            "id": {
-              "type": "string",
-              "index": "not_analyzed"
-            }
-          }
-        },
-        "numero": {
+        "numero": {        
           "type": "long",
           "index": "not_analyzed"
         },
-        "identificacao": {
-          "fields": {
-            "numero": {
-              "type": "long",
-              "index": "not_analyzed"
-            },
-            "ano": {
-              "type": "integer",
-              "index": "not_analyzed"
-            }
-          },
-          "type": "multi_field",
-          "include_in_all": true
+        "ano": {
+          "type": "short",
+          "index": "not_analyzed"
         },
+        "identificacao": {
+          "type": "string",
+          "include_in_all": true,
+          "term_vector": "yes",
+          "index_analyzer": "edge_nGram_analyzer",
+          "search_analyzer": "whitespace_analyzer"
+        },               
         "classeSugerida": {
           "properties": {
-            "id": {
+            "sigla": {
               "type": "string",
               "index": "not_analyzed"
             }
@@ -92,21 +72,29 @@
         },
         "classeProcessual": {
           "properties": {
-            "id": {
+            "sigla": {
               "type": "string",
               "index": "not_analyzed"
             }
           }
         },
-        "motivoRejeicao": {
+        "motivoRejeicao": {        
           "type": "string",
-          "index": "not_analyzed"
+          "index": "no"
         },
         "partes": {
           "properties": {
+          	"sequencial" : {
+          	  "type": "long",
+          	  "index": "no"
+          	},
             "pessoaId": {
-              "type": "long",
-              "index": "not_analyzed"
+	          "properties": {
+	            "sequencial": {
+	              "type": "long",
+	              "index": "not_analyzed"
+	            }
+	          }
             },
             "polo": {
               "type": "string",
@@ -116,7 +104,7 @@
         },
         "documentos": {
           "properties": {
-            "id": {
+            "sequencial": {
               "type": "long",
               "index": "not_analyzed"
             }
@@ -124,7 +112,7 @@
         },
         "processosWorkflow": {
           "properties": {
-            "id": {
+            "sequencial": {
               "type": "long",
               "index": "not_analyzed"
             }
@@ -137,44 +125,34 @@
         "index_analyzer": "edge_nGram_analyzer",
         "search_analyzer": "whitespace_analyzer"
       },
-      "properties": {
+      "dynamic": false,
+      "properties": {      
         "id": {
           "properties": {
-            "id": {
+            "sequencial": {
               "type": "long",
-              "index": "not_analyzed"
+          	  "index": "not_analyzed"              
             }
           }
         },
-        "classe": {
-          "properties": {
-            "id": {
-              "type": "string",
-              "index": "not_analyzed"
-            }
-          }
-        },
-        "numero": {
+        "numero": {        
           "type": "long",
           "index": "not_analyzed"
         },
-        "identificacao": {
-          "fields": {
-            "numero": {
-              "type": "long",
-              "index": "not_analyzed"
-            },
-            "ano": {
-              "type": "integer",
-              "index": "not_analyzed"
-            }
-          },
-          "type": "multi_field",
-          "include_in_all": true
+        "ano": {
+          "type": "short",
+          "index": "not_analyzed"
         },
+        "identificacao": {
+          "type": "string",
+          "include_in_all": true,
+          "term_vector": "yes",
+          "index_analyzer": "edge_nGram_analyzer",
+          "search_analyzer": "whitespace_analyzer"
+        },               
         "classeSugerida": {
           "properties": {
-            "id": {
+            "sigla": {
               "type": "string",
               "index": "not_analyzed"
             }
@@ -182,21 +160,29 @@
         },
         "classeProcessual": {
           "properties": {
-            "id": {
+            "sigla": {
               "type": "string",
               "index": "not_analyzed"
             }
           }
         },
-        "motivoRejeicao": {
+        "motivoRejeicao": {        
           "type": "string",
-          "index": "not_analyzed"
+          "index": "no"
         },
         "partes": {
           "properties": {
+          	"sequencial" : {
+          	  "type": "long",
+          	  "index": "no"
+          	},
             "pessoaId": {
-              "type": "long",
-              "index": "not_analyzed"
+	          "properties": {
+	            "sequencial": {
+	              "type": "long",
+	              "index": "not_analyzed"
+	            }
+	          }
             },
             "polo": {
               "type": "string",
@@ -204,19 +190,19 @@
             }
           }
         },
-        "documentos": {
+        "documentos": {     
           "properties": {
-            "id": {
+            "sequencial": {
               "type": "long",
-              "index": "not_analyzed"
+              "index": "not_analyzed"              
             }
           }
         },
-        "processosWorkflow": {
+        "processosWorkflow": {        
           "properties": {
-            "id": {
+            "sequencial": {
               "type": "long",
-              "index": "not_analyzed"
+          	  "index": "not_analyzed"              
             }
           }
         },
@@ -238,55 +224,61 @@
         }
       }
     },
-    "processo": {
+    "Processo": {
       "_all": {
         "index_analyzer": "edge_nGram_analyzer",
         "search_analyzer": "whitespace_analyzer"
       },
+      "dynamic": false,
       "properties": {
         "id": {
           "properties": {
-            "id": {
+            "sequencial": {
               "type": "long",
-              "index": "not_analyzed"
+          	  "index": "not_analyzed"              
             }
           }
         },
-        "numero": {
-          "type": "long",
-          "index": "not_analyzed"
-        },
         "classe": {
           "properties": {
-            "id": {
+            "sigla": {
               "type": "string",
               "index": "not_analyzed"
             }
           }
-        },
+        },        
+        "numero": {        
+          "type": "long",
+          "index": "not_analyzed"
+        }, 
         "identificacao": {
-          "fields": {
-            "numero": {
+          "type": "string",
+          "include_in_all": true,
+          "term_vector": "yes",
+          "index_analyzer": "edge_nGram_analyzer",
+          "search_analyzer": "whitespace_analyzer"
+        },
+        "relator": {
+          "properties": {
+            "codigo": {
               "type": "long",
               "index": "not_analyzed"
-            },
-            "classe": {
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "index": "not_analyzed"
-                }
-              }
             }
-          },
-          "type": "multi_field",
-          "include_in_all": true
+          }
         },
         "partes": {
           "properties": {
+          	"sequencial": {
+          	  "type": "long",
+              "index": "no"          	  
+          	},
             "pessoaId": {
-              "type": "long",
-              "index": "not_analyzed"
+	          "properties": {
+	            "sequencial": {
+	              "type": "long",
+	              "index": "not_analyzed"
+	            }
+	          }             
             },
             "polo": {
               "type": "string",
@@ -296,9 +288,9 @@
         },
         "pecas": {
           "properties": {
-            "id": {
+            "sequencial": {
               "type": "long",
-              "index": "not_analyzed"
+          	  "index": "not_analyzed"              
             }
           }
         }

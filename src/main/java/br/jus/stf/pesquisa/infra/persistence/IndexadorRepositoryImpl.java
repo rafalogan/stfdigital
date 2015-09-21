@@ -1,5 +1,7 @@
 package br.jus.stf.pesquisa.infra.persistence;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.IndexQuery;
@@ -16,16 +18,18 @@ import br.jus.stf.pesquisa.domain.model.IndexadorRepository;
 public class IndexadorRepositoryImpl implements IndexadorRepository {
 
 	@Autowired
-	private ElasticsearchTemplate elasticSearchTemplate;
+	private ElasticsearchTemplate elasticsearchTemplate;
 	
 	@Override
-	public void criar(String indice, String configuracao) {
-		elasticSearchTemplate.createIndex(indice, configuracao);
+	public void criar(String indice, String configuracao, Map<String, String> mapeamentos) {
+		elasticsearchTemplate.createIndex(indice, configuracao);
+		mapeamentos.forEach((tipo, map) -> elasticsearchTemplate.putMapping(indice, tipo, map));
+		elasticsearchTemplate.refresh(indice, true);
 	}
 
 	@Override
 	public boolean existe(String indice) {
-		return elasticSearchTemplate.indexExists(indice);
+		return elasticsearchTemplate.indexExists(indice);
 	}
 	
 	@Override
@@ -36,7 +40,7 @@ public class IndexadorRepositoryImpl implements IndexadorRepository {
 			.withId(id)
 			.withSource(objeto)
 			.build();
-		elasticSearchTemplate.index(query);
+		elasticsearchTemplate.index(query);
 	}
 
 }

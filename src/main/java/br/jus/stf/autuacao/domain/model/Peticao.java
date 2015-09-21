@@ -21,10 +21,12 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang3.Validate;
 
+import scala.collection.mutable.StringBuilder;
 import br.jus.stf.shared.domain.model.ClasseId;
 import br.jus.stf.shared.domain.model.DocumentoId;
 import br.jus.stf.shared.domain.model.MinistroId;
@@ -45,8 +47,6 @@ import br.jus.stf.shared.domain.stereotype.Entity;
 public abstract class Peticao implements Entity<Peticao, PeticaoId> {
 
 	@EmbeddedId
-	@AttributeOverride(name = "id", 
-		column = @Column(name = "SEQ_PETICAO", nullable = false, updatable = false))
 	private PeticaoId id;
 	
 	@Column(name = "NUM_PETICAO", nullable = false, updatable = false)
@@ -82,6 +82,9 @@ public abstract class Peticao implements Entity<Peticao, PeticaoId> {
 		joinColumns = @JoinColumn(name = "SEQ_PETICAO"))
 	private Set<ProcessoWorkflowId> processosWorkflow = new TreeSet<ProcessoWorkflowId>(
 			(p1, p2) -> p1.toLong().compareTo(p2.toLong()));
+	
+	@Transient
+	private String identificacao;
 
 	public Peticao(final PeticaoId id, final Long numero) {
 		Validate.notNull(id, "peticao.id.required");
@@ -90,6 +93,7 @@ public abstract class Peticao implements Entity<Peticao, PeticaoId> {
 		this.id = id;
 		this.numero = numero;
 		this.ano = Calendar.getInstance().get(Calendar.YEAR);
+		this.identificacao = montarIdentificacao();
 	}
 
 	public PeticaoId id() {
@@ -105,11 +109,7 @@ public abstract class Peticao implements Entity<Peticao, PeticaoId> {
 	}
 	
 	public String identificacao() {
-		return new StringBuilder()
-				.append(numero)
-				.append("/")
-				.append(ano)
-				.toString();
+		return identificacao;
 	}
 
 	public ClasseId classeSugerida() {
@@ -262,6 +262,11 @@ public abstract class Peticao implements Entity<Peticao, PeticaoId> {
 	@Override
 	public boolean sameIdentityAs(Peticao other){
 		return other != null && this.id.sameValueAs(other.id);
+	}
+	
+	private String montarIdentificacao() {
+		return new StringBuilder()
+			.append(numero).append("/").append(ano).toString();
 	}
 
 	// Hibernate

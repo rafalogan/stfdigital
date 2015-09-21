@@ -12,28 +12,28 @@ public class TarefaId implements ValueObject<TarefaId> {
 
 	private static final long serialVersionUID = 747808680221902331L;
 	
-	private Long id;
+	private Long sequencial;
 	
-	public TarefaId(final Long id) {
-		Validate.notNull(id, "tarefaid.id.required");
+	public TarefaId(final Long sequencial) {
+		Validate.notNull(sequencial, "tarefaid.sequencial.required");
 		
-		this.id = id;
+		this.sequencial = sequencial;
 	}
 
 	public Long toLong() {
-		return id;
+		return sequencial;
 	}
 	
 	@Override
 	public String toString() {
-		return id.toString();
+		return sequencial.toString();
 	}
 	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((sequencial == null) ? 0 : sequencial.hashCode());
 		return result;
 	}
 
@@ -48,7 +48,7 @@ public class TarefaId implements ValueObject<TarefaId> {
 
 	@Override
 	public boolean sameValueAs(TarefaId other) {
-		return other != null && id.equals(other.id);
+		return other != null && sequencial.equals(other.sequencial);
 	}
 	
 }

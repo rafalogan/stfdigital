@@ -23,14 +23,14 @@ import com.wordnik.swagger.annotations.ApiOperation;
  *
  */
 @RestController
-@RequestMapping("/api/indexador")
+@RequestMapping("/api/indices")
 public class IndexadorRestResource {
 	
 	@Autowired
 	private IndexadorServiceFacade indexadorServiceFacade;
 	
 	@ApiOperation("Indexa objetos para pesquisa")
-	@RequestMapping(value = "/criarindice", method = RequestMethod.POST)
+	@RequestMapping(value = "", method = RequestMethod.POST)
 	public void criarIndice(@RequestBody @Valid CriarIndiceCommand command, BindingResult result) throws Exception {
 		
 		if (result.hasErrors()) {
@@ -46,13 +46,13 @@ public class IndexadorRestResource {
 	}
 
 	@ApiOperation("Indexa objetos para pesquisa")
-	@RequestMapping(value = "", method = RequestMethod.POST)
-	public void indexar(@RequestBody @Valid IndexarCommand command, BindingResult result) throws Exception {
+	@RequestMapping(value = "/{indice}", method = RequestMethod.POST)
+	public void indexar(@PathVariable String indice, @RequestBody @Valid IndexarCommand command, BindingResult result) throws Exception {
 		
 		if (result.hasErrors()) {
 			throw new IllegalArgumentException(result.getAllErrors().toString());
 		}
-		indexadorServiceFacade.indexar(command.getIndice(), command.getTipo(), command.getId(), command.getObjeto());
+		indexadorServiceFacade.indexar(indice, command.getTipo(), command.getId(), command.getObjeto());
 	}
 
 }

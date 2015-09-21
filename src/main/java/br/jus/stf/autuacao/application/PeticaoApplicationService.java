@@ -16,6 +16,7 @@ import br.jus.stf.autuacao.domain.model.PeticaoFactory;
 import br.jus.stf.autuacao.domain.model.PeticaoFisica;
 import br.jus.stf.autuacao.domain.model.PeticaoRepository;
 import br.jus.stf.autuacao.domain.model.Processo;
+import br.jus.stf.autuacao.domain.model.ProcessoRepository;
 import br.jus.stf.shared.domain.model.ClasseId;
 import br.jus.stf.shared.domain.model.MinistroId;
 
@@ -43,6 +44,9 @@ public class PeticaoApplicationService {
 	
 	@Autowired
 	private PeticaoApplicationEvent peticaoApplicationEvent;
+	
+	@Autowired
+	private ProcessoRepository processoRepository;
 
 	/**
 	 * Registra uma nova petilçao.
@@ -107,7 +111,10 @@ public class PeticaoApplicationService {
 	 */
 	public Processo distribuir(Peticao peticao, MinistroId ministroRelator) {
 		tarefaAdapter.completarDistribuicao(peticao);
-		return peticao.distribuir(ministroRelator);
+		Processo processo = peticao.distribuir(ministroRelator);
+		processoRepository.save(processo);
+		peticaoApplicationEvent.processoDistribuido(processo);
+		return processo;
 	}
 
 	/**

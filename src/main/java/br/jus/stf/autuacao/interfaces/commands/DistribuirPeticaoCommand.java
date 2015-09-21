@@ -17,16 +17,9 @@ public class DistribuirPeticaoCommand {
 	@NotNull
 	@ApiModelProperty(value = "O ministro sorteado para relatar o processo resultado da petição recebida", required=true)
 	private Long ministro;
-	
-	@NotNull
-	@ApiModelProperty(value = "O id da terefa", required=true)
-	private Long tarefa;
 
 	public Long getMinistro() {
 		return ministro;
 	}
-
-	public Long getTarefa() {
-		return tarefa;
-	}
+	
 }

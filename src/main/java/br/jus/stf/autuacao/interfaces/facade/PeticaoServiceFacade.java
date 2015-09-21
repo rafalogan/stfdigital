@@ -21,7 +21,6 @@ import br.jus.stf.autuacao.interfaces.dto.ProcessoDtoAssembler;
 import br.jus.stf.shared.domain.model.ClasseId;
 import br.jus.stf.shared.domain.model.MinistroId;
 import br.jus.stf.shared.domain.model.PeticaoId;
-import br.jus.stf.shared.domain.model.TarefaId;
 
 
 /**
@@ -78,13 +77,12 @@ public class PeticaoServiceFacade {
 	 * @param peticaoId Id da petição física.
 	 * @param classeId Classe processual sugerida.
 	 */
-	public void preautuar(Long peticaoId, String classeId, Long tarefaId) {
+	public void preautuar(Long peticaoId, String classeId) {
 		ClasseId classe = new ClasseId(classeId);
-		TarefaId tarefa = new TarefaId(tarefaId);
 		PeticaoId id = new PeticaoId(peticaoId);
 		PeticaoFisica peticao = Optional.ofNullable(peticaoRepository.findOne(id, PeticaoFisica.class))
 									.orElseThrow(IllegalArgumentException::new);
-		peticaoApplicationService.preautuar(peticao, classe, tarefa);
+		peticaoApplicationService.preautuar(peticao, classe);
 	}
 	
 	/**
@@ -94,38 +92,32 @@ public class PeticaoServiceFacade {
 	 * @param peticaoValida Indica se uma petição é valida ou inválida.
 	 * @param motivoRejeicao Descrição do motivo da rejeição da petição.
 	 */
-	public void autuar(Long peticaoId, String classeId, boolean peticaoValida, String motivoRejeicao, Long tarefaId) {
+	public void autuar(Long peticaoId, String classeId, boolean peticaoValida, String motivoRejeicao) {
 		ClasseId classe = new ClasseId(classeId);
-		TarefaId tarefa = new TarefaId(tarefaId);
 		Peticao peticao = carregarPeticao(peticaoId);
-		peticaoApplicationService.autuar(peticao, classe, peticaoValida, motivoRejeicao, tarefa);
+		peticaoApplicationService.autuar(peticao, classe, peticaoValida, motivoRejeicao);
 	}
 
 	/**
 	 * Devolve uma petição.
-	 * @param idPeticao Id da petição.
+	 * @param peticaoId Id da petição.
 	 * @param motivoRejeicao Motivo da rejeição da petição.
-	 * @param tarefaId
 	 */
-	public void devolver(Long peticaoId, String motivoRejeicao, Long tarefaId) {
-		TarefaId tarefa = new TarefaId(tarefaId);
+	public void devolver(Long peticaoId, String motivoRejeicao) {
 		Peticao peticao = carregarPeticao(peticaoId);
-
-		peticaoApplicationService.devolver(peticao, motivoRejeicao, tarefa);
+		peticaoApplicationService.devolver(peticao, motivoRejeicao);
 	}
 	
 	/**
 	 * Distribui um processo para um ministro relator.
-	 * @param idPeticao Id da petição.
+	 * @param peticaoId Id da petição.
 	 * @param ministroId Id do Ministro Relator.
-	 * @param tarefaId
 	 */
-	public ProcessoDto distribuir(Long peticaoId, Long ministroId, Long tarefaId) {
+	public ProcessoDto distribuir(Long peticaoId, Long ministroId) {
 		MinistroId ministro = new MinistroId(ministroId);
-		TarefaId tarefa = new TarefaId(tarefaId);
 		Peticao peticao = carregarPeticao(peticaoId);
 
-		Processo processo = peticaoApplicationService.distribuir(peticao, ministro, tarefa);
+		Processo processo = peticaoApplicationService.distribuir(peticao, ministro);
 		return processoDtoAssembler.toDto(processo);
 	}
 	

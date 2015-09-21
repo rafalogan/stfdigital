@@ -38,4 +38,9 @@ public class ProcessoServiceFacade {
 				.orElseThrow(IllegalArgumentException::new);
 	}
 	
+	public void sinalizar(Long id, String sinal, String status) {
+		ProcessoWorkflowId processoId = new ProcessoWorkflowId(id);
+		processoApplicationService.sinalizar(processoId , sinal, status);
+	}
+	
 }

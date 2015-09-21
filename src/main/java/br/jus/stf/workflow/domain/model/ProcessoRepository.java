@@ -21,8 +21,28 @@ public interface ProcessoRepository {
 	 */
 	ProcessoWorkflowId criar(String mensagem, String status);
 
+	/**
+	 * Consulta um processo pelo id
+	 * 
+	 * @param id
+	 * @return
+	 */
 	ProcessoWorkflow consultar(ProcessoWorkflowId id);
 	
+	/**
+	 * Salva um processo workflow
+	 * 
+	 * @param processo
+	 * @return
+	 */
 	ProcessoWorkflow salvar(ProcessoWorkflow processo);
+	
+	/**
+	 * Emite um sinal para um processo
+	 * 
+	 * @param sinal
+	 * @param status
+	 */
+	void sinalizar(String sinal, String status);
 	
 }

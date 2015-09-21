@@ -14,12 +14,12 @@ public interface ProcessoWorkflowRepository {
 	 * 
 	 * @param id
 	 */
-	public String status(ProcessoWorkflowId id);
+	String statusById(ProcessoWorkflowId id);
 	
 	/**
 	 * @param status
 	 * @return
 	 */
-	public List<ProcessoWorkflowId> findByStatus(String status);
+	List<ProcessoWorkflowId> findByStatus(String status);
 
 }

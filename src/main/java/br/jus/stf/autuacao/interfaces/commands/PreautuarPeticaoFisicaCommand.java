@@ -1,7 +1,5 @@
 package br.jus.stf.autuacao.interfaces.commands;
 
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -24,16 +22,8 @@ public class PreautuarPeticaoFisicaCommand {
 	@ApiModelProperty(value = "A classe processual sugerida pelo práutuador.", required=true)
 	private String classeSugerida;
 	
-	@NotNull
-	@ApiModelProperty(value = "O id da tarefa do práutuador.", required=true)
-	private Long tarefa;
-	
 	public String getClasseSugerida() {
 		return classeSugerida;
-	}
-	
-	public Long getTarefa() {
-		return tarefa;
 	}
 
 	@Override

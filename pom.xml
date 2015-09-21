@@ -83,7 +83,7 @@
             <groupId>com.mangofactory</groupId>
             <artifactId>swagger-springmvc</artifactId>
             <version>${swagger.version}</version>
-        </dependency>
+        </dependency>       
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>

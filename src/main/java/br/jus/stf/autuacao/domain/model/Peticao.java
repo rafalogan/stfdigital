@@ -82,7 +82,7 @@ public abstract class Peticao implements Entity<Peticao, PeticaoId> {
 		joinColumns = @JoinColumn(name = "SEQ_PETICAO"))
 	private Set<ProcessoWorkflowId> processosWorkflow = new TreeSet<ProcessoWorkflowId>(
 			(p1, p2) -> p1.toLong().compareTo(p2.toLong()));
-	
+
 	public Peticao(final PeticaoId id, final Long numero) {
 		Validate.notNull(id, "peticao.id.required");
 		Validate.notNull(numero, "peticao.numero.required");
@@ -188,7 +188,7 @@ public abstract class Peticao implements Entity<Peticao, PeticaoId> {
 	 */
 	public void aceitar(final ClasseId classeProcessual) {
 		Validate.notNull(classeProcessual, "peticao.classeProcessual.required");
-	
+
 		this.classeProcessual = classeProcessual;
 	}
 

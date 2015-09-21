@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import br.jus.stf.shared.domain.model.ProcessoWorkflowId;
 import br.jus.stf.workflow.domain.model.ProcessoRepository;
+import br.jus.stf.workflow.domain.model.ProcessoWorkflow;
 
 /**
  * @author Rodrigo Barreiros
@@ -30,6 +31,20 @@ public class ProcessoApplicationService {
 	 */
 	public ProcessoWorkflowId iniciar(String mensagem, String status) {
 		return processoRepository.criar(mensagem, status);
+	}
+	
+	/**
+	 * Emite um sinal para um processo e atualiza seu status
+	 * 
+	 * @param id
+	 * @param sinal
+	 * @param status
+	 */
+	public void sinalizar(ProcessoWorkflowId id, String sinal, String status){
+		processoRepository.sinalizar(sinal, status);
+		ProcessoWorkflow processo = processoRepository.consultar(id);
+		processo.atualizarStatus(status);
+		processoRepository.salvar(processo);
 	}
 	
 }

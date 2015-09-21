@@ -1,7 +1,5 @@
 package br.jus.stf.workflow.application;
 
-import java.util.List;
-
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,19 +26,14 @@ public class TarefaApplicationService {
 	@Autowired
 	private ProcessoRepository processoRepository;
 
-	public List<Tarefa> listar(String papel) {
-		return tarefaRepository.listar(papel);
-	}
-
+	/**
+	 * Completa uma tarefa com um status
+	 * 
+	 * @param tarefa
+	 * @param status
+	 */
 	public void completar(Tarefa tarefa, String status) {
 		tarefaRepository.completar(tarefa, status);
-		ProcessoWorkflow processo = processoRepository.consultar(tarefa.processo());	
-		processo.atualizarStatus(status);
-		processoRepository.salvar(processo);
-	}
-	
-	public void sinalizar(Tarefa tarefa, String sinal, String status){
-		tarefaRepository.sinalizar(tarefa, sinal, status);
 		ProcessoWorkflow processo = processoRepository.consultar(tarefa.processo());	
 		processo.atualizarStatus(status);
 		processoRepository.salvar(processo);

@@ -21,13 +21,13 @@ import br.jus.stf.shared.domain.model.ProcessoWorkflowRepository;
  */
 @Repository
 public class ProcessoWorkflowRepositoryImpl implements ProcessoWorkflowRepository {
-
+	
 	@PersistenceContext
 	private EntityManager entityManager;
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public String status(ProcessoWorkflowId id) {
+	public String statusById(ProcessoWorkflowId id) {
 		String sql = new StringBuilder("SELECT pw.DSC_STATUS_PROCESS_INSTANCE ")
 			.append("FROM PLATAFORMA.PROCESSO_WORKFLOW pw ")
 			.append("WHERE pw.NUM_PROCESS_INSTANCE = :id").toString();

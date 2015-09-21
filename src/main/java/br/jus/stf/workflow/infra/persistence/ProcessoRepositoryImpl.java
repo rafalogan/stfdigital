@@ -62,5 +62,12 @@ public class ProcessoRepositoryImpl extends SimpleJpaRepository<ProcessoWorkflow
 	public ProcessoWorkflow salvar(ProcessoWorkflow processo) {
 		return super.save(processo);
 	}
+	
+	@Override
+	public void sinalizar(String sinal, String status) {
+		Map<String, Object> variaveis = new HashMap<String, Object>();
+		variaveis.put("status", status);
+		runtimeService.signalEventReceived(sinal, variaveis);
+	}
 
 }

@@ -2,8 +2,9 @@ package br.jus.stf.autuacao.domain;
 
 import org.springframework.stereotype.Component;
 
-import br.jus.stf.autuacao.infra.PeticaoStatus;
-import br.jus.stf.shared.domain.model.ProcessoWorkflowId;
+import br.jus.stf.autuacao.domain.model.Peticao;
+import br.jus.stf.autuacao.domain.model.PeticaoEletronica;
+import br.jus.stf.autuacao.domain.model.PeticaoFisica;
 
 
 
@@ -18,11 +19,22 @@ import br.jus.stf.shared.domain.model.ProcessoWorkflowId;
 public interface ProcessoWorkflowAdapter {
 
 	/**
-	 * Iniciar uma nova instância do processo de autuação de originários.
-	 * @param tipoRecebimento Forma como a petição ingressou no Tribunal (física ou eletrônica).
-	 * @param status Status da petição
-	 * @return Identificador da instância do processo de autuação criado.
+	 * Iniciar uma nova instância do processo de autuação de petição eletrônica
+	 * @param peticaoEletronica
 	 */
-	public ProcessoWorkflowId iniciar(String tipoRecebimento, PeticaoStatus status);
+	void iniciarProcessoWorkflow(PeticaoEletronica peticaoEletronica);
+	
+	/**
+	 * Iniciar uma nova instância do processo de autuação de petição eletrônica
+	 * @param peticaoFisica
+	 */
+	void iniciarProcessoWorkflow(PeticaoFisica peticaoFisica);
+	
+	/**
+	 * Emite um sinal para o processo que rejeita a autução da petição
+	 * 
+	 * @param peticao
+	 */
+	void rejeitarAutuacao(Peticao peticao);
 	
 }

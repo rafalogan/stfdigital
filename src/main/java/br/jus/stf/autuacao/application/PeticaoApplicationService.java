@@ -16,11 +16,8 @@ import br.jus.stf.autuacao.domain.model.PeticaoFactory;
 import br.jus.stf.autuacao.domain.model.PeticaoFisica;
 import br.jus.stf.autuacao.domain.model.PeticaoRepository;
 import br.jus.stf.autuacao.domain.model.Processo;
-import br.jus.stf.autuacao.infra.PeticaoStatus;
 import br.jus.stf.shared.domain.model.ClasseId;
 import br.jus.stf.shared.domain.model.MinistroId;
-import br.jus.stf.shared.domain.model.ProcessoWorkflowId;
-import br.jus.stf.shared.domain.model.TarefaId;
 
 /**
  * @author Rodrigo Barreiros
@@ -51,18 +48,12 @@ public class PeticaoApplicationService {
 	 * Registra uma nova petilçao.
 	 * 
 	 * @param peticaoEletronica Petição eletrônica recebida.
-	 * 
 	 * @return Id da petição eletrônica registrada.
 	 */
 	public PeticaoEletronica peticionar(ClasseId classeSugerida, List<String> poloAtivo, List<String> poloPassivo, List<String> documentos) {
-		String tipoRecebimento = "remessaEletronica";
-		
 		PeticaoEletronica peticao = peticaoFactory.criarPeticaoEletronica(classeSugerida, poloAtivo, poloPassivo, documentos);
-		
-		ProcessoWorkflowId id = processoAdapter.iniciar(tipoRecebimento, PeticaoStatus.A_AUTUAR);
-		peticao.associarProcessoWorkflow(id);
+		processoAdapter.iniciarProcessoWorkflow(peticao);
 		peticaoRepository.save(peticao);
-		
 		peticaoApplicationEvent.peticaoRecebida(peticao);
 		return peticao;
 	}
@@ -71,18 +62,12 @@ public class PeticaoApplicationService {
 	 * Registra o recebimento de uma petição física.
 	 * 
 	 * @param volumes Quantidade de volumes da petição física.
-	 * 
 	 * @return Id da petição física registrada.
 	 */
 	public PeticaoFisica registrar(Integer volumes, Integer apensos, FormaRecebimento formaRecebimento, String numeroSedex){
-		String tipoRecebimento = "remessaFisica";
-
 		PeticaoFisica peticao = peticaoFactory.criarPeticaoFisica(volumes, apensos, formaRecebimento, numeroSedex);
-		
-		ProcessoWorkflowId id = processoAdapter.iniciar(tipoRecebimento, PeticaoStatus.A_PREAUTUAR);
-		peticao.associarProcessoWorkflow(id);
+		processoAdapter.iniciarProcessoWorkflow(peticao);
 		peticaoRepository.save(peticao);
-		
 		peticaoApplicationEvent.peticaoRecebida(peticao);
 		return peticao;
 	}
@@ -91,12 +76,11 @@ public class PeticaoApplicationService {
 	 * Realiza a preautuação de uma petição física.
 	 * @param peticaoFisica Dados da petição física.
 	 * @param classeSugerida
-	 * @param tarefaId
 	 */
-	public void preautuar(PeticaoFisica peticao, ClasseId classeSugerida, TarefaId tarefaId) {
+	public void preautuar(PeticaoFisica peticao, ClasseId classeSugerida) {
 		peticao.preautuar(classeSugerida);
+		tarefaAdapter.completarPreautuacao(peticao);
 		peticaoRepository.save(peticao);
-		tarefaAdapter.completar(tarefaId, PeticaoStatus.A_AUTUAR);
 	}
 
 	/**
@@ -104,13 +88,13 @@ public class PeticaoApplicationService {
 	 * @param peticao Dados da petição.
 	 * @param peticaoValida Indica se uma petição foi considerada válida.
 	 */
-	public void autuar(Peticao peticao, ClasseId classe, boolean peticaoValida, String motivoRejeicao, TarefaId tarefaId) {
+	public void autuar(Peticao peticao, ClasseId classe, boolean peticaoValida, String motivoRejeicao) {
 		if (peticaoValida){
 			peticao.aceitar(classe);
-			tarefaAdapter.completar(tarefaId, PeticaoStatus.ACEITA);
+			tarefaAdapter.completarAutuacao(peticao);
 		} else {
 			peticao.rejeitar(motivoRejeicao);
-			tarefaAdapter.sinalizar(tarefaId, "peticaoInvalida", PeticaoStatus.RECUSADA);
+			processoAdapter.rejeitarAutuacao(peticao);
 		}
 		peticaoRepository.save(peticao);
 	}
@@ -119,11 +103,10 @@ public class PeticaoApplicationService {
 	 * Distribui um processo para um Ministro Relator.
 	 * @param peticao Dados da petição.
 	 * @param ministroRelator Dados do Ministro Relator do processo.
-	 * @param tarefaId
 	 * @return processo
 	 */
-	public Processo distribuir(Peticao peticao, MinistroId ministroRelator, TarefaId tarefaId) {
-		tarefaAdapter.completar(tarefaId, PeticaoStatus.DISTRIBUIDA);
+	public Processo distribuir(Peticao peticao, MinistroId ministroRelator) {
+		tarefaAdapter.completarDistribuicao(peticao);
 		return peticao.distribuir(ministroRelator);
 	}
 
@@ -132,10 +115,10 @@ public class PeticaoApplicationService {
 	 * @param peticao Dados da petição.
 	 * @param motivoRejeicao Motivo da rejeição da petição.
 	 */
-	public void devolver(Peticao peticao, String motivoRejeicao, TarefaId tarefaId) {
+	public void devolver(Peticao peticao, String motivoRejeicao) {
 		peticao.rejeitar(motivoRejeicao);
+		tarefaAdapter.completarDevolucao(peticao);
 		peticaoRepository.save(peticao);
-		tarefaAdapter.completar(tarefaId, PeticaoStatus.DEVOLVIDA);
 	}
 	
 }

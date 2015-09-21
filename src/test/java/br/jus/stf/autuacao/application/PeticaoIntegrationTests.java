@@ -1,18 +1,14 @@
 package br.jus.stf.autuacao.application;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import org.activiti.engine.task.Task;
-import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 
 import br.jus.stf.AbstractIntegrationTests;
+import br.jus.stf.autuacao.domain.model.FormaRecebimento;
+import br.jus.stf.autuacao.domain.model.PeticaoFactory;
+import br.jus.stf.autuacao.domain.model.PeticaoFisica;
 import br.jus.stf.autuacao.interfaces.facade.PeticaoServiceFacade;
-import br.jus.stf.workflow.application.TarefaApplicationService;
+import br.jus.stf.shared.domain.model.ClasseId;
 
 /**
  * Teste de integração do processo de peticionamento.
@@ -26,6 +22,16 @@ public class PeticaoIntegrationTests extends AbstractIntegrationTests {
 	
 	@Autowired
 	private PeticaoServiceFacade peticaoServiceFacade;
+	
+	@Autowired
+	private PeticaoFactory peticaoFactory;
+	
+	@Test
+	public void test() {
+		PeticaoFisica peticao = peticaoFactory.criarPeticaoFisica(2, 2, FormaRecebimento.SEDEX, "22");
+		peticao.aceitar(new ClasseId("HC"));
+		
+	}
 	
 	/*
 	@Autowired

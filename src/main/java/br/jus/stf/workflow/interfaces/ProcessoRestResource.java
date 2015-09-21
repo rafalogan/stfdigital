@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.jus.stf.workflow.interfaces.commands.IniciarProcessoCommand;
+import br.jus.stf.workflow.interfaces.commands.SinalizarCommand;
 import br.jus.stf.workflow.interfaces.dto.ProcessoDto;
 import br.jus.stf.workflow.interfaces.facade.ProcessoServiceFacade;
 
@@ -50,6 +51,16 @@ public class ProcessoRestResource {
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public ProcessoDto consultar(@PathVariable("id") Long id) { 
 		return processoServiceFacade.consultar(id);
+	}
+	
+    //TODO : Substituir validação pelo @Valid e injeção do BindingResult
+    @RequestMapping(value = "/{id}/sinalizar", method = RequestMethod.PUT)
+	public void sinalizar(@PathVariable("id") Long id, @RequestBody SinalizarCommand command) {
+		Set<ConstraintViolation<SinalizarCommand>> result = validator.validate(command);
+		if (!result.isEmpty()) {
+			throw new IllegalArgumentException(result.toString());
+		}
+		processoServiceFacade.sinalizar(id, command.getSinal(), command.getStatus());
 	}
 	
 }

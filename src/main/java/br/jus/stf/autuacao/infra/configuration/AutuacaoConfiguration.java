@@ -16,7 +16,7 @@ import br.jus.stf.autuacao.infra.IndexadorRestAdapter;
  */
 @Configuration
 public class AutuacaoConfiguration {
-
+	
 	@Autowired
 	private IndexadorRestAdapter indexadorRestAdapter;
 	

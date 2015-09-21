@@ -2,9 +2,7 @@ package br.jus.stf.autuacao.domain;
 
 import org.springframework.stereotype.Component;
 
-import br.jus.stf.autuacao.infra.PeticaoStatus;
-import br.jus.stf.shared.domain.model.TarefaId;
-import br.jus.stf.workflow.interfaces.dto.TarefaDto;
+import br.jus.stf.autuacao.domain.model.Peticao;
 
 /**
  * @author Rodrigo Barreiros
@@ -15,10 +13,12 @@ import br.jus.stf.workflow.interfaces.dto.TarefaDto;
 @Component
 public interface TarefaAdapter {
 
-	public void completar(TarefaId id, PeticaoStatus status);
-
-	public void sinalizar(TarefaId id, String sinal, PeticaoStatus status);
+	void completarAutuacao(Peticao peticao);
 	
-	public TarefaDto consultar(TarefaId id);
+	void completarPreautuacao(Peticao peticao);
+	
+	void completarDistribuicao(Peticao peticao);
+	
+	void completarDevolucao(Peticao peticao);
 
 }

@@ -9,7 +9,7 @@ public enum PeticaoStatus {
 	A_PREAUTUAR,
 	A_AUTUAR,
 	ACEITA,
-	RECUSADA,
+	REJEITADA,
 	DISTRIBUIDA,
 	DEVOLVIDA;
 	

@@ -11,6 +11,7 @@ import org.activiti.engine.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import br.jus.stf.shared.domain.model.ProcessoWorkflowId;
 import br.jus.stf.shared.domain.model.TarefaId;
 import br.jus.stf.workflow.domain.model.Tarefa;
 import br.jus.stf.workflow.domain.model.TarefaRepository;
@@ -44,18 +45,19 @@ public class TarefaRepositoryImpl implements TarefaRepository {
 		variaveis.put("status", status);
 		taskService.complete(tarefa.id().toString(), variaveis);
 	}
-	
-	@Override
-	public void sinalizar(Tarefa tarefa, String sinal, String status) {
-		Map<String, Object> variaveis = new HashMap<String, Object>();
-		variaveis.put("status", status);
-		runtimeService.signalEventReceived(sinal, tarefa.definicao().getExecutionId(), variaveis);
-	}
 
 	@Override
 	public Tarefa consultar(TarefaId id) {
 		return Optional.ofNullable(
 					taskService.createTaskQuery().taskId(id.toString()).singleResult())
+				.map(task -> new Tarefa(task))
+				.orElse(null);
+	}
+	
+	@Override
+	public Tarefa consultarPorProcesso(ProcessoWorkflowId id) {
+		return Optional.ofNullable(
+					taskService.createTaskQuery().processInstanceId(id.toString()).active().singleResult())
 				.map(task -> new Tarefa(task))
 				.orElse(null);
 	}

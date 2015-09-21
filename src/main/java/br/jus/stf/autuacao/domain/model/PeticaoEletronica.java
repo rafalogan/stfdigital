@@ -31,6 +31,7 @@ public class PeticaoEletronica extends Peticao {
 		partes.forEach(parte -> super.adicionarParte(parte));
 		documentos.forEach(documento -> super.adicionarDocumento(documento));
 	}
+	
 	PeticaoEletronica() {
 		
 	}
